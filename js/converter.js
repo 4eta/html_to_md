@@ -93,116 +93,15 @@ class HtmlToMarkdownConverter {
       // 不要な要素を除去
       this.removeUnwantedElements(doc);
       
-      // 指定された部分を抽出
-      const extractedContent = this.extractSpecificSection(doc);
-      if (!extractedContent) {
-        return '⚠️ 警告: "実行時間制限:" から "Problem Statement" までの部分が見つかりませんでした。\n\nHTMLファイルの構造を確認してください。';
-      }
+      // body全体を変換
+      const body = doc.body || doc.documentElement;
       
       // 変換処理
-      return this.processElement(extractedContent).trim();
+      return this.processElement(body).trim();
       
     } catch (error) {
       throw new Error('HTML解析に失敗しました');
     }
-  }
-  
-  extractSpecificSection(doc) {
-    // テキストコンテンツから"実行時間制限:"を含む要素を検索
-    const allElements = doc.querySelectorAll('*');
-    let startElement = null;
-    let endElement = null;
-    
-    // "実行時間制限:"を含む要素を探す
-    for (let element of allElements) {
-      const textContent = element.textContent;
-      if (textContent && textContent.includes('実行時間制限:')) {
-        startElement = element;
-        break;
-      }
-    }
-    
-    if (!startElement) {
-      console.log('開始要素 "実行時間制限:" が見つかりません');
-      return null;
-    }
-    
-    // "Problem Statement"を含む要素を探す（開始要素より後ろから）
-    let foundStart = false;
-    for (let element of allElements) {
-      if (element === startElement) {
-        foundStart = true;
-        continue;
-      }
-      
-      if (foundStart) {
-        const textContent = element.textContent;
-        if (textContent && (
-          textContent.includes('Problem Statement') ||
-          textContent.includes('問題文') ||
-          textContent.includes('問題の説明')
-        )) {
-          endElement = element;
-          break;
-        }
-      }
-    }
-    
-    if (!endElement) {
-      console.log('終了要素 "Problem Statement" が見つかりません');
-      return null;
-    }
-    
-    // 開始要素から終了要素までの範囲を抽出
-    return this.extractElementsRange(startElement, endElement);
-  }
-  
-  extractElementsRange(startElement, endElement) {
-    // 新しいコンテナを作成
-    const container = document.createElement('div');
-    
-    // 開始要素から終了要素まで（終了要素は含まない）の要素を収集
-    let currentElement = startElement;
-    let collecting = true;
-    
-    // DOM階層を考慮した要素収集
-    const elementsToInclude = [];
-    
-    // 開始要素を追加
-    elementsToInclude.push(startElement.cloneNode(true));
-    
-    // 開始要素の次の兄弟要素から探索開始
-    let nextElement = this.getNextElement(startElement);
-    
-    while (nextElement && nextElement !== endElement) {
-      elementsToInclude.push(nextElement.cloneNode(true));
-      nextElement = this.getNextElement(nextElement);
-    }
-    
-    // 収集した要素をコンテナに追加
-    elementsToInclude.forEach(element => {
-      container.appendChild(element);
-    });
-    
-    return container.children.length > 0 ? container : null;
-  }
-  
-  getNextElement(element) {
-    // 次の要素を取得（DOM階層を考慮）
-    if (element.nextElementSibling) {
-      return element.nextElementSibling;
-    }
-    
-    // 親要素の次の兄弟要素を探す
-    let parent = element.parentElement;
-    while (parent) {
-      if (parent.nextElementSibling) {
-        return parent.nextElementSibling;
-      }
-      parent = parent.parentElement;
-    }
-    
-    return null;
   }
   
   removeUnwantedElements(doc) {
