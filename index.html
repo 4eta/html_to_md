@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML → Markdown 変換ツール</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔄 HTML → Markdown 変換ツール</h1>
+    </div>
+
+    <div class="content">
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-content">
+          <div class="drop-icon">📁</div>
+          <h3>HTMLファイルをここにドロップ</h3>
+          <p>または</p>
+          <button class="btn" onclick="document.getElementById('fileInput').click()">
+            ファイルを選択
+          </button>
+          <input type="file" id="fileInput" class="file-input" accept=".html,.htm" />
+        </div>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>変換中...</p>
+      </div>
+
+      <div class="output-section" id="outputSection">
+        <div class="output-header">
+          <h2>📝 Markdown出力</h2>
+          <button class="btn copy-btn" id="copyBtn">📋 コピー</button>
+        </div>
+        <div class="output-container">
+          <div class="output" id="output"></div>
+        </div>
+      </div>
+
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+
+  <script src="js/converter.js"></script>
+</body>
+</html>
